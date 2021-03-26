@@ -18,6 +18,7 @@ class MaisProximo
 public:
     Ponto a, b;
     float distancia;
+    float tempo;
 };
 
 /** Usado para abrir o arquivo e pegar as linhas **/
@@ -49,36 +50,46 @@ vector<Ponto> readFileToVector(const string filename, int &lenght)
     return pontos;
 }
 
-float stringToFloat(string s) {
+float stringToFloat(string s)
+{
     return stof(s);
 }
 
 float calculaDistancia(Ponto a, Ponto b)
 {
-    float d1 =  (stringToFloat(a.x) - stringToFloat(b.x));
-    float d2 =  (stringToFloat(a.y) - stringToFloat(b.y));
+    float d1 = (stringToFloat(a.x) - stringToFloat(b.x));
+    float d2 = (stringToFloat(a.y) - stringToFloat(b.y));
     return sqrt((d1 * d1) + (d2 * d2));
 }
 
 MaisProximo forca_bruta(const vector<Ponto> pontos, int lenght)
 {
+    // ------------------------------------
+    clock_t begin, end;
+    begin = clock();
+    // ------------------------------------
     MaisProximo maisProximo = MaisProximo();
     maisProximo.distancia = 10000000000000;
     for (long long i(0); i < lenght - 1; ++i)
     {
-        for (long long j(i+1); j < lenght ; j++) {
+        for (long long j(i + 1); j < lenght; j++)
+        {
             Ponto a = pontos[i];
             Ponto b = pontos[j];
             float distancia = calculaDistancia(a, b);
-            if (distancia < maisProximo.distancia) {
+            if (distancia < maisProximo.distancia)
+            {
                 maisProximo.a = a;
                 maisProximo.b = b;
                 maisProximo.distancia = distancia;
-
-                cout << "distancia - " << fixed << distancia << setprecision(5) << endl;
             }
         }
     }
+    // ------------------------------------
+    end = clock();
+    float time_taken = float(end - begin) / float(CLOCKS_PER_SEC);
+    maisProximo.tempo = time_taken;
+    // ------------------------------------
     return maisProximo;
 }
 
@@ -87,7 +98,8 @@ void divisao_e_conquista(const vector<Ponto> v, string &ponto, int lenght)
     for (long long i(0); i < lenght; ++i)
     {
         Ponto p = v[i];
-        cout << "x " << p.x << " || " << "y " << p.y << endl;
+        cout << "x " << p.x << " || "
+             << "y " << p.y << endl;
         ponto = to_string(lenght);
     }
 }
@@ -107,13 +119,11 @@ int main(int argc, char **argv)
             // cout << "distancia - " << fixed << calculaDistancia(lines[0], lines[1]) << setprecision(5) << endl;
             MaisProximo ponto_forca_bruta = forca_bruta(lines, lenght);
             // divisao_e_conquista(lines, ponto2, lenght);
-            end = clock();
-            double time_taken = double(end - begin) / double(CLOCKS_PER_SEC);
 
             cout << "\n\n\n\n\n";
-            cout << "Ponto 1 X - " << ponto_forca_bruta.a.x << ", " << ponto_forca_bruta.a.y << ", ";
-            cout << "Ponto 2 X - " << ponto_forca_bruta.b.x << ", " << ponto_forca_bruta.b.y << ", ";
-            cout << "Distancia - " << ponto_forca_bruta.distancia << ", " << fixed << time_taken << setprecision(5);
+            cout << fixed << ponto_forca_bruta.tempo << setprecision(5) << " " << ponto_forca_bruta.distancia;
+            cout << " " << ponto_forca_bruta.a.x << " " << ponto_forca_bruta.a.y;
+            cout << " " << ponto_forca_bruta.b.x << " " << ponto_forca_bruta.b.y;
             cout << "\n\n\n\n\n";
         }
         else
