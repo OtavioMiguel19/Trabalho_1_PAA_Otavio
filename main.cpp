@@ -4,15 +4,28 @@
 #include <fstream>
 #include <time.h>
 #include <iomanip>
+#include <math.h>
 
 using namespace std;
 
+class Ponto
+{
+public:
+    string x, y;
+};
+class MaisProximo
+{
+public:
+    Ponto a, b;
+    float distancia;
+};
+
 /** Usado para abrir o arquivo e pegar as linhas **/
-vector<string> readFileToVector(const string filename, int &lenght)
+vector<Ponto> readFileToVector(const string filename, int &lenght)
 {
     ifstream source;
     source.open(filename);
-    vector<string> lines;
+    vector<Ponto> pontos;
     string line;
     bool isFirstLine = true;
     while (getline(source, line))
@@ -24,26 +37,57 @@ vector<string> readFileToVector(const string filename, int &lenght)
         }
         else
         {
-            lines.push_back(line);
+            string divider = " ";
+            string x = line.substr(0, line.find(divider));
+            string y = line.substr(line.find(divider) + 1, line.length());
+            Ponto ponto = Ponto();
+            ponto.x = x;
+            ponto.y = y;
+            pontos.push_back(ponto);
         }
     }
-    return lines;
+    return pontos;
 }
 
-void forca_bruta(const vector<string> v, string &ponto, int lenght)
+float stringToFloat(string s) {
+    return stof(s);
+}
+
+float calculaDistancia(Ponto a, Ponto b)
 {
-    cout << lenght << endl;
-    for (long long i(1); i <= lenght; ++i)
+    float d1 =  (stringToFloat(a.x) - stringToFloat(b.x));
+    float d2 =  (stringToFloat(a.y) - stringToFloat(b.y));
+    return sqrt((d1 * d1) + (d2 * d2));
+}
+
+MaisProximo forca_bruta(const vector<Ponto> pontos, int lenght)
+{
+    MaisProximo maisProximo = MaisProximo();
+    maisProximo.distancia = 10000000000000;
+    for (long long i(0); i < lenght - 1; ++i)
     {
-        ponto = to_string(lenght);
+        for (long long j(i+1); j < lenght ; j++) {
+            Ponto a = pontos[i];
+            Ponto b = pontos[j];
+            float distancia = calculaDistancia(a, b);
+            if (distancia < maisProximo.distancia) {
+                maisProximo.a = a;
+                maisProximo.b = b;
+                maisProximo.distancia = distancia;
+
+                cout << "distancia - " << fixed << distancia << setprecision(5) << endl;
+            }
+        }
     }
+    return maisProximo;
 }
 
-void divisao_e_conquista(const vector<string> v, string &ponto, int lenght)
+void divisao_e_conquista(const vector<Ponto> v, string &ponto, int lenght)
 {
-    cout << lenght << endl;
-    for (long long i(1); i <= lenght; ++i)
+    for (long long i(0); i < lenght; ++i)
     {
+        Ponto p = v[i];
+        cout << "x " << p.x << " || " << "y " << p.y << endl;
         ponto = to_string(lenght);
     }
 }
@@ -55,20 +99,21 @@ int main(int argc, char **argv)
         clock_t begin, end;
         begin = clock();
 
-        string ponto1, ponto2;
         string fn = argv[1]; //filename
         int lenght = 0;
-        vector<string> lines = readFileToVector(fn, lenght);
+        vector<Ponto> lines = readFileToVector(fn, lenght);
         if (lenght > 0)
         {
-            forca_bruta(lines, ponto1, lenght);
-            divisao_e_conquista(lines, ponto2, lenght);
+            // cout << "distancia - " << fixed << calculaDistancia(lines[0], lines[1]) << setprecision(5) << endl;
+            MaisProximo ponto_forca_bruta = forca_bruta(lines, lenght);
+            // divisao_e_conquista(lines, ponto2, lenght);
             end = clock();
             double time_taken = double(end - begin) / double(CLOCKS_PER_SEC);
 
             cout << "\n\n\n\n\n";
-            cout << "Pontos - " << ponto1 << ", " << ponto2 << ", " << fixed
-                 << time_taken << setprecision(5);
+            cout << "Ponto 1 X - " << ponto_forca_bruta.a.x << ", " << ponto_forca_bruta.a.y << ", ";
+            cout << "Ponto 2 X - " << ponto_forca_bruta.b.x << ", " << ponto_forca_bruta.b.y << ", ";
+            cout << "Distancia - " << ponto_forca_bruta.distancia << ", " << fixed << time_taken << setprecision(5);
             cout << "\n\n\n\n\n";
         }
         else
