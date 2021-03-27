@@ -148,29 +148,95 @@ void mergeSort(vector<Ponto> &A, long long i, long long t)
 // FIM MERGE SORT
 // ----------------------------------------------------------------------
 
-void divisao_e_conquista_declaracao(vector<Ponto> &v, int n)
+MaisProximo menorDistancia(MaisProximo mp1, MaisProximo mp2)
 {
-    mergeSort(v, 0, n - 1);
-
-    // cout << "TERMINOU" << endl;
-
-    // cout << "Menor no x = " << v[0].x << " " << v[0].y << endl;
-    // cout << "Maior no x = " << v[v.size() - 1].x << " " << v[v.size() - 1].y << endl;
-
-    divisao_e_conquista_recursivo(v, n, 1);
+    if (mp1.distancia < mp2.distancia)
+    {
+        return mp1;
+    }
+    return mp2;
 }
 
-void divisao_e_conquista_recursivo(vector<Ponto> v, int n, int partes)
+vector<Ponto> getVecInRange(vector<Ponto> original, float start, float finish)
 {
-    Ponto beg = v[0];
-    Ponto end = v[n - 1];
-    float ampl = float(stringToFloat(beg.x) - stringToFloat(end.x));
+    vector<Ponto> saida;
+    for (int i = 0; i < original.size(); i++)
+    {
+        float xPoint = stringToFloat(original[i].x);
+        if (xPoint >= start && xPoint < finish)
+        {
+            saida.push_back(original[i]);
+        }
+    }
+    return saida;
+}
+vector<Ponto> getVecInRange2(vector<Ponto> original, float start, float finish)
+{
+    vector<Ponto> saida;
+    for (int i = start; i < finish; i++)
+    {
+        saida.push_back(original[i]);
+    }
+    return saida;
+}
+
+MaisProximo divisao_e_conquista_recursivo(vector<Ponto> v, long n)
+{
     MaisProximo proximo = MaisProximo();
     proximo.distancia = 10000000000000;
 
-    for (int i = 0; i < partes; i++) {
-        
+    if (n <= 3)
+    {
+        return forca_bruta(v, n);
     }
+    else
+    {
+
+        long mid = n / 2;
+
+        vector<Ponto> dlVec = getVecInRange2(v, 0, mid);
+
+        MaisProximo dl = divisao_e_conquista_recursivo(dlVec, dlVec.size());
+
+        proximo = menorDistancia(dl, proximo);
+
+        vector<Ponto> drVec = getVecInRange2(v, mid, n);
+        MaisProximo dr = divisao_e_conquista_recursivo(drVec, drVec.size());
+        proximo = menorDistancia(dr, proximo);
+
+        vector<Ponto> r3Vec;
+        Ponto p_central = v[mid];
+
+        for (int index = 0; index < n; index++)
+        {
+            float absolute = abs(stringToFloat(v[index].x) - stringToFloat(p_central.x));
+            if (absolute < proximo.distancia && absolute > 0)
+            {
+                r3Vec.push_back(v[index]);
+            }
+        }
+
+        MaisProximo r3 = divisao_e_conquista_recursivo(r3Vec, r3Vec.size());
+        proximo = menorDistancia(r3, proximo);
+        return proximo;
+    }
+}
+
+MaisProximo divisao_e_conquista_declaracao(vector<Ponto> &v, int n)
+{
+    // ------------------------------------
+    clock_t begin, end;
+    begin = clock();
+    // ------------------------------------
+    mergeSort(v, 0, n - 1);
+
+    MaisProximo maisProximo = divisao_e_conquista_recursivo(v, n);
+    // ------------------------------------
+    end = clock();
+    float time_taken = float(end - begin) / float(CLOCKS_PER_SEC);
+    maisProximo.tempo = time_taken;
+    // ------------------------------------
+    return maisProximo;
 }
 
 int main(int argc, char **argv)
@@ -186,12 +252,16 @@ int main(int argc, char **argv)
             MaisProximo ponto_forca_bruta = forca_bruta(lines, lenght);
 
             vector<Ponto> pontos = lines;
-            divisao_e_conquista_declaracao(pontos, lenght);
+            MaisProximo ponto_divisao_e_conquista = divisao_e_conquista_declaracao(pontos, lenght);
 
             cout << "\n\n\n\n\n";
             cout << fixed << ponto_forca_bruta.tempo << setprecision(5) << " " << ponto_forca_bruta.distancia;
             cout << " " << ponto_forca_bruta.a.x << " " << ponto_forca_bruta.a.y;
             cout << " " << ponto_forca_bruta.b.x << " " << ponto_forca_bruta.b.y;
+
+            cout << " " << fixed << ponto_divisao_e_conquista.tempo << setprecision(5) << " " << ponto_divisao_e_conquista.distancia;
+            cout << " " << ponto_divisao_e_conquista.a.x << " " << ponto_divisao_e_conquista.a.y;
+            cout << " " << ponto_divisao_e_conquista.b.x << " " << ponto_divisao_e_conquista.b.y;
             cout << "\n\n\n\n\n";
         }
         else
