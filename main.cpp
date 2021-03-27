@@ -199,7 +199,7 @@ MaisProximo divisao_e_conquista_recursivo(vector<Ponto> v, long n)
         proximo = menorDistancia(dr, proximo);
 
         vector<Ponto> r3Vec;
-        Ponto p_central = v[mid-1];
+        Ponto p_central = v[mid - 1];
 
         for (long long index = 0; index < n; index++)
         {
@@ -222,19 +222,54 @@ MaisProximo divisao_e_conquista_declaracao(vector<Ponto> &v, long long n)
     clock_t begin, end;
     begin = clock();
     // ------------------------------------
-    cout << "Iniciou mergeSort" << endl;
-    
+    // cout << "Iniciou mergeSort" << endl;
+
     mergeSort(v, 0, n - 1);
 
-    cout << "Terminou mergeSort" << endl;
+    // cout << "Terminou mergeSort" << endl;
+
+    // cout << "Iniciou recursivo" << endl;
 
     MaisProximo maisProximo = divisao_e_conquista_recursivo(v, n);
+    // cout << "Terminou recursivo" << endl;
     // ------------------------------------
     end = clock();
     float time_taken = float(end - begin) / float(CLOCKS_PER_SEC);
     maisProximo.tempo = time_taken;
     // ------------------------------------
     return maisProximo;
+}
+
+void showResults(MaisProximo bruto, MaisProximo divisao)
+{
+    cout << fixed;
+    cout << bruto.tempo;
+    cout << setprecision(5);
+    cout << " ";
+    cout << bruto.distancia;
+    cout << " ";
+    cout << bruto.a.x;
+    cout << " ";
+    cout << bruto.a.y;
+    cout << " ";
+    cout << bruto.b.x;
+    cout << " ";
+    cout << bruto.b.y;
+    cout << " ";
+    cout << fixed;
+    cout << divisao.tempo;
+    cout << setprecision(5);
+    cout << " ";
+    cout << divisao.distancia;
+    cout << " ";
+    cout << divisao.a.x;
+    cout << " ";
+    cout << divisao.a.y;
+    cout << " ";
+    cout << divisao.b.x;
+    cout << " ";
+    cout << divisao.b.y;
+    cout << endl;
 }
 
 int main(int argc, char **argv)
@@ -246,35 +281,24 @@ int main(int argc, char **argv)
         vector<Ponto> lines = readFileToVector(fn, lenght);
         if (lenght > 0)
         {
-            cout << "Terminou de ler o arquivo." << endl;;
+            // cout << "Terminou de ler o arquivo." << endl;
 
             // cout << "distancia - " << fixed << calculaDistancia(lines[0], lines[1]) << setprecision(5) << endl;
-            cout << "Iniciando Forca Bruta." << endl;;
-            
+            // cout << "Iniciando Forca Bruta." << endl;;
+
             MaisProximo ponto_forca_bruta = forca_bruta(lines, lenght);
 
-            cout << "Terminou Forca Bruta." << endl;;
+            // cout << "Terminou Forca Bruta." << endl;;
 
             vector<Ponto> pontos = lines;
 
-            cout << "Iniciando Divisao e Conquista." << endl;;
+            // cout << "Iniciando Divisao e Conquista." << endl;
 
             MaisProximo ponto_divisao_e_conquista = divisao_e_conquista_declaracao(pontos, lenght);
 
-            cout << "Terminou Divisao e Conquista." << endl;;
+            // cout << "Terminou Divisao e Conquista." << endl;
 
-
-            cout << "\n\n\n\n\n";
-            cout << fixed << ponto_forca_bruta.tempo << setprecision(5) << " " << ponto_forca_bruta.distancia;
-            cout << " " << ponto_forca_bruta.a.x << " " << ponto_forca_bruta.a.y;
-            cout << " " << ponto_forca_bruta.b.x << " " << ponto_forca_bruta.b.y;
-
-            cout << " ------ ";
-
-            cout << " " << fixed << ponto_divisao_e_conquista.tempo << setprecision(5) << " " << ponto_divisao_e_conquista.distancia;
-            cout << " " << ponto_divisao_e_conquista.a.x << " " << ponto_divisao_e_conquista.a.y;
-            cout << " " << ponto_divisao_e_conquista.b.x << " " << ponto_divisao_e_conquista.b.y;
-            cout << "\n\n\n\n\n";
+            showResults(ponto_forca_bruta, ponto_divisao_e_conquista);
         }
         else
         {
