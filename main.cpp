@@ -22,7 +22,7 @@ public:
 };
 
 /** Usado para abrir o arquivo e pegar as linhas **/
-vector<Ponto> readFileToVector(const string filename, int &lenght)
+vector<Ponto> readFileToVector(const string filename, long long &lenght)
 {
     ifstream source;
     source.open(filename);
@@ -62,7 +62,7 @@ float calculaDistancia(Ponto a, Ponto b)
     return sqrt((d1 * d1) + (d2 * d2));
 }
 
-MaisProximo forca_bruta(const vector<Ponto> pontos, int n)
+MaisProximo forca_bruta(const vector<Ponto> pontos, long long n)
 {
     // ------------------------------------
     clock_t begin, end;
@@ -107,8 +107,6 @@ void combina(vector<Ponto> &A, long long i, long long m, long long t)
     {
         C.push_back(A[k]);
     }
-    // cout << "B0 " << B[0].x << endl;
-    // cout << "C0 " << C[0].x << endl;
 
     long sizeB = B.size(), sizeC = C.size();
 
@@ -138,10 +136,6 @@ void mergeSort(vector<Ponto> &A, long long i, long long t)
     mergeSort(A, i, m);
     mergeSort(A, m + 1, t);
 
-    // cout << "i " << i << endl;
-    // cout << "m " << m << endl;
-    // cout << "t " << t << endl;
-
     combina(A, i, m, t);
 }
 // ----------------------------------------------------------------------
@@ -160,7 +154,7 @@ MaisProximo menorDistancia(MaisProximo mp1, MaisProximo mp2)
 vector<Ponto> getVecInRange(vector<Ponto> original, float start, float finish)
 {
     vector<Ponto> saida;
-    for (int i = 0; i < original.size(); i++)
+    for (long long i = 0; i < original.size(); i++)
     {
         float xPoint = stringToFloat(original[i].x);
         if (xPoint >= start && xPoint < finish)
@@ -173,7 +167,7 @@ vector<Ponto> getVecInRange(vector<Ponto> original, float start, float finish)
 vector<Ponto> getVecInRange2(vector<Ponto> original, float start, float finish)
 {
     vector<Ponto> saida;
-    for (int i = start; i < finish; i++)
+    for (long long i = start; i < finish; i++)
     {
         saida.push_back(original[i]);
     }
@@ -205,12 +199,12 @@ MaisProximo divisao_e_conquista_recursivo(vector<Ponto> v, long n)
         proximo = menorDistancia(dr, proximo);
 
         vector<Ponto> r3Vec;
-        Ponto p_central = v[mid];
+        Ponto p_central = v[mid-1];
 
-        for (int index = 0; index < n; index++)
+        for (long long index = 0; index < n; index++)
         {
             float absolute = abs(stringToFloat(v[index].x) - stringToFloat(p_central.x));
-            if (absolute < proximo.distancia && absolute > 0)
+            if (absolute <= proximo.distancia && absolute > 0)
             {
                 r3Vec.push_back(v[index]);
             }
@@ -222,7 +216,7 @@ MaisProximo divisao_e_conquista_recursivo(vector<Ponto> v, long n)
     }
 }
 
-MaisProximo divisao_e_conquista_declaracao(vector<Ponto> &v, int n)
+MaisProximo divisao_e_conquista_declaracao(vector<Ponto> &v, long long n)
 {
     // ------------------------------------
     clock_t begin, end;
@@ -244,7 +238,7 @@ int main(int argc, char **argv)
     if (argv[1])
     {
         string fn = argv[1]; //filename
-        int lenght = 0;
+        long long lenght = 0;
         vector<Ponto> lines = readFileToVector(fn, lenght);
         if (lenght > 0)
         {
@@ -258,6 +252,8 @@ int main(int argc, char **argv)
             cout << fixed << ponto_forca_bruta.tempo << setprecision(5) << " " << ponto_forca_bruta.distancia;
             cout << " " << ponto_forca_bruta.a.x << " " << ponto_forca_bruta.a.y;
             cout << " " << ponto_forca_bruta.b.x << " " << ponto_forca_bruta.b.y;
+
+            cout << " ------ ";
 
             cout << " " << fixed << ponto_divisao_e_conquista.tempo << setprecision(5) << " " << ponto_divisao_e_conquista.distancia;
             cout << " " << ponto_divisao_e_conquista.a.x << " " << ponto_divisao_e_conquista.a.y;
