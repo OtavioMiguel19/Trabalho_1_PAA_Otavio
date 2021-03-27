@@ -222,7 +222,11 @@ MaisProximo divisao_e_conquista_declaracao(vector<Ponto> &v, long long n)
     clock_t begin, end;
     begin = clock();
     // ------------------------------------
+    cout << "Iniciou mergeSort" << endl;
+    
     mergeSort(v, 0, n - 1);
+
+    cout << "Terminou mergeSort" << endl;
 
     MaisProximo maisProximo = divisao_e_conquista_recursivo(v, n);
     // ------------------------------------
@@ -242,11 +246,23 @@ int main(int argc, char **argv)
         vector<Ponto> lines = readFileToVector(fn, lenght);
         if (lenght > 0)
         {
+            cout << "Terminou de ler o arquivo." << endl;;
+
             // cout << "distancia - " << fixed << calculaDistancia(lines[0], lines[1]) << setprecision(5) << endl;
+            cout << "Iniciando Forca Bruta." << endl;;
+            
             MaisProximo ponto_forca_bruta = forca_bruta(lines, lenght);
 
+            cout << "Terminou Forca Bruta." << endl;;
+
             vector<Ponto> pontos = lines;
+
+            cout << "Iniciando Divisao e Conquista." << endl;;
+
             MaisProximo ponto_divisao_e_conquista = divisao_e_conquista_declaracao(pontos, lenght);
+
+            cout << "Terminou Divisao e Conquista." << endl;;
+
 
             cout << "\n\n\n\n\n";
             cout << fixed << ponto_forca_bruta.tempo << setprecision(5) << " " << ponto_forca_bruta.distancia;
